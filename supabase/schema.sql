@@ -666,14 +666,14 @@ update tracked_brands
     and source = 'sync';
 -- SEO Core tables: site connections, pages, issues, agent runs
 
-create type if not exists site_connection_type   as enum ('wordpress', 'html');
-create type if not exists site_connection_status as enum ('active', 'error', 'disconnected');
-create type if not exists page_index_status      as enum ('indexed', 'noindex', 'unknown');
-create type if not exists issue_severity         as enum ('critical', 'warning', 'info');
-create type if not exists issue_status           as enum ('open', 'resolved', 'ignored');
-create type if not exists seo_agent_type         as enum ('auditor', 'keyword_researcher', 'content_optimizer', 'rank_tracker', 'geo_monitor', 'technical_auditor', 'autoblog', 'twitter_engage', 'twitter_analytics', 'content_gap');
-create type if not exists seo_agent_run_status   as enum ('running', 'completed', 'failed');
-create type if not exists seo_issue_type         as enum ('missing_title','title_too_long','title_too_short','missing_meta_description','meta_description_too_long','missing_h1','thin_content','noindex_page','duplicate_title','duplicate_meta','broken_link','missing_schema','slow_page','missing_canonical');
+create type site_connection_type   as enum ('wordpress', 'html');
+create type site_connection_status as enum ('active', 'error', 'disconnected');
+create type page_index_status      as enum ('indexed', 'noindex', 'unknown');
+create type issue_severity         as enum ('critical', 'warning', 'info');
+create type issue_status           as enum ('open', 'resolved', 'ignored');
+create type seo_agent_type         as enum ('auditor', 'keyword_researcher', 'content_optimizer', 'rank_tracker', 'geo_monitor', 'technical_auditor', 'autoblog', 'twitter_engage', 'twitter_analytics', 'content_gap');
+create type seo_agent_run_status   as enum ('running', 'completed', 'failed');
+create type seo_issue_type         as enum ('missing_title','title_too_long','title_too_short','missing_meta_description','meta_description_too_long','missing_h1','thin_content','noindex_page','duplicate_title','duplicate_meta','broken_link','missing_schema','slow_page','missing_canonical');
 
 create table if not exists site_connections (
   id             uuid primary key default gen_random_uuid(),
@@ -839,7 +839,7 @@ create policy "workspace members" on competitor_pages for all
   using (exists (select 1 from competitor_sites cs where cs.id = competitor_id and is_workspace_member(cs.workspace_id)));
 -- GEO (Generative Engine Optimization) — AI visibility tracking
 
-create type if not exists geo_engine as enum ('perplexity', 'chatgpt', 'google_ai_overview', 'bing_copilot');
+create type geo_engine as enum ('perplexity', 'chatgpt', 'google_ai_overview', 'bing_copilot');
 
 create table if not exists geo_queries (
   id           uuid primary key default gen_random_uuid(),
@@ -881,7 +881,7 @@ create policy "workspace members" on geo_results for all
   using (exists (select 1 from geo_queries gq where gq.id = query_id and is_workspace_member(gq.workspace_id)));
 -- Auto blogging: RSS feeds, items, generated drafts
 
-create type if not exists blog_draft_status as enum ('generating','draft','approved','publishing','published','failed','dismissed');
+create type blog_draft_status as enum ('generating','draft','approved','publishing','published','failed','dismissed');
 
 create table if not exists rss_feeds (
   id           uuid primary key default gen_random_uuid(),
