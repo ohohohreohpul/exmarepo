@@ -70,11 +70,11 @@ import { SeoOverviewView }      from './views/seo-overview-view'
 import { SeoSitesView }         from './views/seo-sites-view'
 import { SeoPagesView }         from './views/seo-pages-view'
 import { SeoIssuesView }        from './views/seo-issues-view'
-import { KeywordsView }         from './views/keywords-view'
-import { ContentGapView }       from './views/content-gap-view'
-import { GeoView }              from './views/geo-view'
-import { AutoblogView }         from './views/autoblog-view'
-import { TwitterBotView }       from './views/twitter-bot-view'
+import { SeoKeywordsView }      from './views/seo-keywords-view'
+import { SeoGapView }           from './views/seo-gap-view'
+import { SeoGeoView }           from './views/seo-geo-view'
+import { SeoAutoblogView }      from './views/seo-autoblog-view'
+import { SeoTwitterView }       from './views/seo-twitter-view'
 
 type ViewId =
   | 'home'
@@ -368,11 +368,11 @@ export function CompetitiveIntelDashboard({ workspaceId, workspaceName, workspac
           {view === 'seo-sites'    && <SeoSitesView workspaceId={workspaceId} />}
           {view === 'seo-pages'    && <SeoPagesView workspaceId={workspaceId} />}
           {view === 'seo-issues'   && <SeoIssuesView workspaceId={workspaceId} />}
-          {view === 'seo-keywords' && <KeywordsView workspaceId={workspaceId} />}
-          {view === 'content-gap'  && <ContentGapView workspaceId={workspaceId} />}
-          {view === 'geo'          && <GeoView workspaceId={workspaceId} />}
-          {view === 'autoblog'     && <AutoblogView workspaceId={workspaceId} />}
-          {view === 'twitter-bot'  && <TwitterBotView workspaceId={workspaceId} />}
+          {view === 'seo-keywords' && <SeoKeywordsView workspaceId={workspaceId} />}
+          {view === 'content-gap'  && <SeoGapView workspaceId={workspaceId} />}
+          {view === 'geo'          && <SeoGeoView workspaceId={workspaceId} />}
+          {view === 'autoblog'     && <SeoAutoblogView workspaceId={workspaceId} />}
+          {view === 'twitter-bot'  && <SeoTwitterView workspaceId={workspaceId} />}
         </main>
       </SidebarInset>
     </SidebarProvider>
