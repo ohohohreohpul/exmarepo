@@ -1028,3 +1028,11 @@ create policy "workspace members" on twitter_bot_configs for all using (is_works
 create policy "workspace members" on twitter_feed_tweets for all using (is_workspace_member(workspace_id));
 create policy "workspace members" on twitter_actions     for all using (is_workspace_member(workspace_id));
 create policy "workspace members" on twitter_agent_runs  for all using (is_workspace_member(workspace_id));
+
+-- ============================================================
+-- Role grants (required after schema reset)
+-- ============================================================
+grant usage  on schema public to anon, authenticated;
+grant all    on all tables    in schema public to anon, authenticated;
+grant all    on all sequences in schema public to anon, authenticated;
+grant all    on all routines  in schema public to anon, authenticated;
