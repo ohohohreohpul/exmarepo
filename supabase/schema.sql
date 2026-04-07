@@ -1,6 +1,13 @@
 -- ============================================================
--- Competitive Intelligence Ad Tracker — Initial Schema
+-- SEOGOD — Full Schema (clean install)
+-- Run this on a fresh Supabase project.
+-- It drops and recreates the public schema entirely.
 -- ============================================================
+
+drop schema public cascade;
+create schema public;
+grant all on schema public to postgres;
+grant all on schema public to public;
 
 -- Enable UUID generation
 create extension if not exists "pgcrypto";
