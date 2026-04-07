@@ -3,23 +3,26 @@
 import { useState, useEffect } from 'react'
 import {
   Home,
-  LayoutDashboard,
-  Users,
   BarChart3,
-  Sparkles,
-  MessageSquare,
-  ImageIcon,
+  Workflow,
+  LayoutGrid,
   Bell,
   Plug,
   Settings2,
   RefreshCcw,
   Download,
   ChevronRight,
-  Brain,
   Bot,
   LogOut,
   CircleUser,
+  Globe,
+  Search,
   TrendingUp,
+  Eye,
+  Rss,
+  FileText,
+  AlertCircle,
+  Bird,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -51,30 +54,39 @@ import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import { ClueZeroMark } from '@/components/brand/logo'
+import { loadBrandColors } from '@/lib/brand-colors'
+import { PageLoader } from '@/components/ui/page-loader'
 
-import { HomeView }            from './views/home-view'
-import { OverviewView }        from './views/overview-view'
-import { MovementView }        from './views/movement-view'
-import { CompetitiveView }     from './views/competitive-view'
-import { PerformanceView }     from './views/performance-view'
-import { OrlenView }           from './views/orlen-view'
-import { AiInsightsView }      from './views/ai-insights-view'
-import { CreativeLibraryView } from './views/creative-library-view'
-import { AlertsView }          from './views/alerts-view'
-import { ConnectionsView }     from './views/connections-view'
-import { SetupView }           from './views/setup-view'
-import { StrategyView }          from './views/strategy-view'
-import { AccountView }            from './views/account-view'
-import { AgentsView }             from './views/agents-view'
-import { PerformanceAgentView }   from './views/performance-agent-view'
+import { HomeView }             from './views/home-view'
+import { AlertsView }           from './views/alerts-view'
+import { ConnectionsView }      from './views/connections-view'
+import { SetupView }            from './views/setup-view'
+import { AccountView }          from './views/account-view'
+import { AgentsHubView }        from './views/agents-hub-view'
+import { IntelligenceHubView }  from './views/intelligence-hub-view'
+import { CanvasView }           from './canvas/canvas-view'
+import { DashboardsView }       from './views/dashboards-view'
+import { SeoOverviewView }      from './views/seo-overview-view'
+import { SeoSitesView }         from './views/seo-sites-view'
+import { SeoPagesView }         from './views/seo-pages-view'
+import { SeoIssuesView }        from './views/seo-issues-view'
+import { KeywordsView }         from './views/keywords-view'
+import { ContentGapView }       from './views/content-gap-view'
+import { GeoView }              from './views/geo-view'
+import { AutoblogView }         from './views/autoblog-view'
+import { TwitterBotView }       from './views/twitter-bot-view'
 
 type ViewId =
   | 'home'
-  | 'overview' | 'movement' | 'competitive' | 'performance' | 'orlen'
-  | 'ai' | 'creative-library' | 'strategy'
-  | 'agents' | 'agent-performance'
+  | 'intelligence'
+  | 'canvas'
+  | 'dashboards'
+  | 'agents'
   | 'alerts'
   | 'connections' | 'setup' | 'account'
+  | 'seo-overview' | 'seo-sites' | 'seo-pages' | 'seo-issues'
+  | 'seo-keywords' | 'content-gap' | 'geo' | 'autoblog'
+  | 'twitter-bot'
 
 const NAV_GROUPS = [
   {
@@ -86,40 +98,48 @@ const NAV_GROUPS = [
   {
     label: 'Reporting',
     items: [
-      { id: 'overview'          as ViewId, label: 'Market Overview',         icon: LayoutDashboard },
-      { id: 'movement'          as ViewId, label: 'Weekly Movement',          icon: TrendingUp },
-      { id: 'competitive'       as ViewId, label: 'Competitive Intelligence', icon: Users },
-      { id: 'performance'       as ViewId, label: 'Campaign Performance',     icon: BarChart3 },
-      { id: 'orlen'             as ViewId, label: 'Brand Deep Dive',           icon: Sparkles },
-    ],
-  },
-  {
-    label: 'Intelligence',
-    items: [
-      { id: 'ai'               as ViewId, label: 'AI Insights',              icon: MessageSquare },
-      { id: 'creative-library' as ViewId, label: 'Creative Library',         icon: ImageIcon },
-      { id: 'strategy'         as ViewId, label: 'Strategy Intelligence',    icon: Brain },
+      { id: 'intelligence' as ViewId, label: 'Intelligence', icon: BarChart3 },
+      { id: 'canvas'       as ViewId, label: 'Canvas',       icon: Workflow },
+      { id: 'dashboards'   as ViewId, label: 'Spaces',       icon: LayoutGrid },
     ],
   },
   {
     label: 'Agents',
     items: [
-      { id: 'agents'           as ViewId, label: 'Agent Hub',                 icon: Bot },
-      { id: 'agent-performance' as ViewId, label: 'Performance Manager',      icon: TrendingUp },
+      { id: 'agents' as ViewId, label: 'Agent Hub', icon: Bot },
+    ],
+  },
+  {
+    label: 'SEO',
+    items: [
+      { id: 'seo-overview' as ViewId, label: 'SEO Overview',  icon: Globe },
+      { id: 'seo-sites'    as ViewId, label: 'Sites',         icon: Plug },
+      { id: 'seo-pages'    as ViewId, label: 'Pages',         icon: FileText },
+      { id: 'seo-issues'   as ViewId, label: 'Issues',        icon: AlertCircle },
+      { id: 'seo-keywords' as ViewId, label: 'Keywords',      icon: Search },
+      { id: 'content-gap'  as ViewId, label: 'Content Gap',   icon: TrendingUp },
+      { id: 'geo'          as ViewId, label: 'AI Visibility',  icon: Eye },
+      { id: 'autoblog'     as ViewId, label: 'Autopilot Blog', icon: Rss },
+    ],
+  },
+  {
+    label: 'Social',
+    items: [
+      { id: 'twitter-bot' as ViewId, label: 'X / Twitter Bot', icon: Bird },
     ],
   },
   {
     label: 'Monitor',
     items: [
-      { id: 'alerts'           as ViewId, label: 'Alerts',                   icon: Bell },
+      { id: 'alerts' as ViewId, label: 'Alerts', icon: Bell },
     ],
   },
   {
     label: 'Workspace',
     items: [
-      { id: 'connections'      as ViewId, label: 'Connections',              icon: Plug },
-      { id: 'setup'            as ViewId, label: 'Setup',                    icon: Settings2 },
-      { id: 'account'          as ViewId, label: 'Account',                  icon: CircleUser },
+      { id: 'connections' as ViewId, label: 'Connections', icon: Plug },
+      { id: 'setup'       as ViewId, label: 'Setup',        icon: Settings2 },
+      { id: 'account'     as ViewId, label: 'Account',      icon: CircleUser },
     ],
   },
 ]
@@ -147,7 +167,7 @@ function generateWeeks(n = 4): { value: string; label: string }[] {
 const weeks = generateWeeks(4)
 
 // Views that don't need the week selector
-const WORKSPACE_VIEWS: ViewId[] = ['home', 'connections', 'setup', 'alerts', 'account', 'agents', 'agent-performance']
+const WORKSPACE_VIEWS: ViewId[] = ['home', 'connections', 'setup', 'alerts', 'account', 'agents', 'intelligence', 'canvas', 'dashboards', 'seo-overview', 'seo-sites', 'seo-pages', 'seo-issues', 'seo-keywords', 'content-gap', 'geo', 'autoblog', 'twitter-bot']
 
 interface Props {
   workspaceId: string
@@ -162,12 +182,20 @@ interface SnowflakeSource {
 }
 
 export function CompetitiveIntelDashboard({ workspaceId, workspaceName, workspaceSlug, ownBrand = '' }: Props) {
-  const [view, setView] = useState<ViewId>('home')
+  const [view,          setView]          = useState<ViewId>('home')
+  const [pendingView,   setPendingView]   = useState<ViewId | null>(null)
+  const [transitioning, setTransitioning] = useState(false)
   const [week, setWeek] = useState('w0')
   const [sources, setSources] = useState<SnowflakeSource[]>([])
   const [connectionId, setConnectionId] = useState<string>('all')
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    if (!workspaceId) return
+    // Warm the brand-colors cache so all charts use live colors immediately
+    loadBrandColors(workspaceId)
+  }, [workspaceId])
 
   useEffect(() => {
     if (!workspaceId) return
@@ -180,6 +208,18 @@ export function CompetitiveIntelDashboard({ workspaceId, workspaceName, workspac
       })
       .catch(() => {})
   }, [workspaceId])
+
+  function navigateTo(next: ViewId) {
+    if (next === view && !transitioning) return
+    setPendingView(next)
+    setTransitioning(true)
+    // Show icon for 480 ms, then swap view and fade out
+    setTimeout(() => {
+      setView(next)
+      setPendingView(null)
+      setTimeout(() => setTransitioning(false), 220)
+    }, 480)
+  }
 
   async function handleSignOut() {
     await supabase.auth.signOut()
@@ -220,13 +260,13 @@ export function CompetitiveIntelDashboard({ workspaceId, workspaceName, workspac
                   {group.items.map(item => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton
-                        isActive={view === item.id}
-                        onClick={() => setView(item.id)}
+                        isActive={view === item.id || pendingView === item.id}
+                        onClick={() => navigateTo(item.id)}
                         tooltip={item.label}
                         className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-foreground"
                       >
                         <item.icon className="size-4" />
-                        <span>{item.id === 'orlen' && ownBrand ? `${ownBrand} Deep Dive` : item.label}</span>
+                        <span>{item.label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -238,7 +278,7 @@ export function CompetitiveIntelDashboard({ workspaceId, workspaceName, workspac
 
         <SidebarFooter className="p-3 group-data-[collapsible=icon]:p-2">
           <div className="flex items-center gap-2.5 group-data-[collapsible=icon]:justify-center">
-            <button onClick={() => setView('account')} className="shrink-0" title="Account settings">
+            <button onClick={() => navigateTo('account')} className="shrink-0" title="Account settings">
               <Avatar className="size-7">
                 <AvatarFallback className="bg-zinc-600 text-white text-[10px] font-semibold">
                   {workspaceName.slice(0, 2).toUpperCase()}
@@ -247,7 +287,7 @@ export function CompetitiveIntelDashboard({ workspaceId, workspaceName, workspac
             </button>
             <div className="flex flex-col min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
               <button
-                onClick={() => setView('account')}
+                onClick={() => navigateTo('account')}
                 className="text-xs font-medium text-sidebar-foreground truncate text-left hover:underline"
               >
                 {workspaceName}
@@ -313,22 +353,26 @@ export function CompetitiveIntelDashboard({ workspaceId, workspaceName, workspac
           </div>
         </header>
 
-        <main className="p-6">
-          {view === 'home'             && <HomeView workspaceName={workspaceName} workspaceId={workspaceId} ownBrand={ownBrand} onNavigate={setView} connectionId={connectionId === 'all' ? undefined : connectionId} />}
-          {view === 'overview'         && <OverviewView workspaceId={workspaceId} connectionId={connectionId === 'all' ? undefined : connectionId} />}
-          {view === 'movement'         && <MovementView workspaceId={workspaceId} connectionId={connectionId === 'all' ? undefined : connectionId} />}
-          {view === 'competitive'      && <CompetitiveView workspaceId={workspaceId} connectionId={connectionId === 'all' ? undefined : connectionId} />}
-          {view === 'performance'      && <PerformanceView workspaceId={workspaceId} connectionId={connectionId === 'all' ? undefined : connectionId} />}
-          {view === 'orlen'            && <OrlenView workspaceId={workspaceId} ownBrand={ownBrand} connectionId={connectionId === 'all' ? undefined : connectionId} />}
-          {view === 'ai'               && <AiInsightsView workspaceId={workspaceId} ownBrand={ownBrand} connectionId={connectionId === 'all' ? undefined : connectionId} />}
-          {view === 'creative-library' && <CreativeLibraryView workspaceId={workspaceId} connectionId={connectionId === 'all' ? undefined : connectionId} onNavigate={(v) => setView(v as ViewId)} />}
-          {view === 'strategy'          && <StrategyView workspaceId={workspaceId} ownBrand={ownBrand} onNavigate={(v) => setView(v as ViewId)} />}
-          {view === 'agents'           && <AgentsView onNavigate={(v) => setView(v as ViewId)} />}
-          {view === 'agent-performance' && <PerformanceAgentView workspaceId={workspaceId} ownBrand={ownBrand} connectionId={connectionId === 'all' ? undefined : connectionId} onBack={() => setView('agents')} />}
-          {view === 'alerts'           && <AlertsView workspaceId={workspaceId} />}
-          {view === 'connections'      && <ConnectionsView workspaceId={workspaceId} />}
-          {view === 'setup'            && <SetupView workspaceId={workspaceId} workspaceName={workspaceName} workspaceSlug={workspaceSlug} ownBrand={ownBrand} />}
-          {view === 'account'          && <AccountView workspaceId={workspaceId} />}
+        <main className="p-6 relative">
+          <PageLoader visible={transitioning} />
+          {view === 'home'         && <HomeView workspaceName={workspaceName} workspaceId={workspaceId} ownBrand={ownBrand} onNavigate={() => navigateTo('intelligence')} connectionId={connectionId === 'all' ? undefined : connectionId} />}
+          {view === 'intelligence' && <IntelligenceHubView workspaceId={workspaceId} ownBrand={ownBrand} connectionId={connectionId === 'all' ? undefined : connectionId} />}
+          {view === 'canvas'       && <CanvasView workspaceId={workspaceId} connectionId={connectionId === 'all' ? undefined : connectionId} />}
+          {view === 'dashboards'   && <DashboardsView workspaceId={workspaceId} connectionId={connectionId === 'all' ? undefined : connectionId} onNavigate={(v) => navigateTo(v as ViewId)} />}
+          {view === 'agents'       && <AgentsHubView workspaceId={workspaceId} ownBrand={ownBrand} connectionId={connectionId === 'all' ? undefined : connectionId} />}
+          {view === 'alerts'       && <AlertsView workspaceId={workspaceId} />}
+          {view === 'connections'  && <ConnectionsView workspaceId={workspaceId} />}
+          {view === 'setup'        && <SetupView workspaceId={workspaceId} workspaceName={workspaceName} workspaceSlug={workspaceSlug} ownBrand={ownBrand} />}
+          {view === 'account'      && <AccountView workspaceId={workspaceId} />}
+          {view === 'seo-overview' && <SeoOverviewView workspaceId={workspaceId} onNavigate={(v) => navigateTo(v as ViewId)} />}
+          {view === 'seo-sites'    && <SeoSitesView workspaceId={workspaceId} />}
+          {view === 'seo-pages'    && <SeoPagesView workspaceId={workspaceId} />}
+          {view === 'seo-issues'   && <SeoIssuesView workspaceId={workspaceId} />}
+          {view === 'seo-keywords' && <KeywordsView workspaceId={workspaceId} />}
+          {view === 'content-gap'  && <ContentGapView workspaceId={workspaceId} />}
+          {view === 'geo'          && <GeoView workspaceId={workspaceId} />}
+          {view === 'autoblog'     && <AutoblogView workspaceId={workspaceId} />}
+          {view === 'twitter-bot'  && <TwitterBotView workspaceId={workspaceId} />}
         </main>
       </SidebarInset>
     </SidebarProvider>
